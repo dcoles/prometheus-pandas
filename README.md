@@ -3,7 +3,7 @@
 Python library for querying [Prometheus](https://prometheus.io/) and accessing the results as
  [Pandas](https://pandas.pydata.org/) data structures.
 
-This is mostly intended for use in [Jupyter](https://jupyter.org/) notebooks.
+This is mostly intended for use in [Jupyter](https://jupyter.org/) notebooks. See [Prometheus.ipynb](Prometheus.ipynb) for an example.
 
 ## Example
 
