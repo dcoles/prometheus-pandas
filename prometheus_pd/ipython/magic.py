@@ -23,9 +23,9 @@ class PrometheusMagics(Magics):
 
     @magic_arguments.magic_arguments()
     @magic_arguments.argument('url', help='Prometheus host (URL)')
-    @magic_arguments.argument('start', help='Prometheus expression query string')
-    @magic_arguments.argument('end', help='Prometheus expression query string')
-    @magic_arguments.argument('step', help='Prometheus expression query string')
+    @magic_arguments.argument('start', help='Start timestamp (`rfc3339 | unix_timestamp`)')
+    @magic_arguments.argument('end', help='End timestamp (`rfc3339 | unix_timestamp`)')
+    @magic_arguments.argument('step', help='Query resolution step width in `duration` format or float number of seconds')
     @magic_arguments.argument('output', nargs='?', help='Output variable')
     @magic_arguments.argument('--timeout', '-T', help='Evaluation timeout')
     @cell_magic
