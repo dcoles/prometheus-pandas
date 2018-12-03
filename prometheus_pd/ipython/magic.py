@@ -1,7 +1,11 @@
+import datetime
+
 from prometheus_pd import query
 
 from IPython.core.magic import (magics_class, line_magic, cell_magic, Magics)
 from IPython.core import magic_arguments
+
+from prometheus_pd.duration import parse_duration
 
 
 @magics_class
@@ -33,6 +37,26 @@ class PrometheusMagics(Magics):
         args = magic_arguments.parse_argstring(self.query_range, line)
         result = query.Prometheus(args.url).query_range(
             cell, args.start, args.end, args.step, timeout=args.timeout)
+
+        if args.output:
+            self.shell.user_ns[args.output] = result
+        else:
+            return result
+
+    @magic_arguments.magic_arguments()
+    @magic_arguments.argument('url', help='Prometheus host (URL)')
+    @magic_arguments.argument('duration', help='Query window in `duration` format or float number of seconds')
+    @magic_arguments.argument('step', help='Query resolution step width in `duration` format or float number of seconds')
+    @magic_arguments.argument('output', nargs='?', help='Output variable')
+    @magic_arguments.argument('--timeout', '-T', help='Evaluation timeout')
+    @cell_magic
+    def query_range_now(self, line, cell):
+        args = magic_arguments.parse_argstring(self.query_range_now, line)
+        duration = parse_duration(args.duration) if isinstance(args.duration, str) else args.duration
+        end = datetime.datetime.now(datetime.timezone.utc)
+        start = end - datetime.timedelta(seconds=duration)
+        result = query.Prometheus(args.url).query_range(
+            cell, start.timestamp(), end.timestamp(), args.step, timeout=args.timeout)
 
         if args.output:
             self.shell.user_ns[args.output] = result
