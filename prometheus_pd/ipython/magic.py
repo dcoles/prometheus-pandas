@@ -16,8 +16,8 @@ class PrometheusMagics(Magics):
     @magic_arguments.argument('--time', '-t', help='Evaluation timestamp')
     @magic_arguments.argument('--timeout', '-T', help='Evaluation timeout')
     @cell_magic
-    def query(self, line, cell):
-        args = magic_arguments.parse_argstring(self.query, line)
+    def prometheus_query(self, line, cell):
+        args = magic_arguments.parse_argstring(self.prometheus_query, line)
         result = query.Prometheus(args.url).query(cell, time=args.time, timeout=args.timeout)
 
         if args.output:
@@ -33,8 +33,8 @@ class PrometheusMagics(Magics):
     @magic_arguments.argument('output', nargs='?', help='Output variable')
     @magic_arguments.argument('--timeout', '-T', help='Evaluation timeout')
     @cell_magic
-    def query_range(self, line, cell):
-        args = magic_arguments.parse_argstring(self.query_range, line)
+    def prometheus_query_range(self, line, cell):
+        args = magic_arguments.parse_argstring(self.prometheus_query_range, line)
         result = query.Prometheus(args.url).query_range(
             cell, args.start, args.end, args.step, timeout=args.timeout)
 
@@ -50,8 +50,8 @@ class PrometheusMagics(Magics):
     @magic_arguments.argument('output', nargs='?', help='Output variable')
     @magic_arguments.argument('--timeout', '-T', help='Evaluation timeout')
     @cell_magic
-    def query_range_now(self, line, cell):
-        args = magic_arguments.parse_argstring(self.query_range_now, line)
+    def prometheus_query_range_now(self, line, cell):
+        args = magic_arguments.parse_argstring(self.prometheus_query_range_now, line)
         duration = parse_duration(args.duration) if isinstance(args.duration, str) else args.duration
         end = datetime.datetime.now(datetime.timezone.utc)
         start = end - datetime.timedelta(seconds=duration)
