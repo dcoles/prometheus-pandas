@@ -1,11 +1,10 @@
 import datetime
 
-from prometheus_pd import query
-
 from IPython.core.magic import (magics_class, line_magic, cell_magic, Magics)
 from IPython.core import magic_arguments
 
-from prometheus_pd.duration import parse_duration
+from prometheus_pandas import query
+from prometheus_pandas.duration import parse_duration
 
 
 @magics_class

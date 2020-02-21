@@ -8,7 +8,7 @@ This is mostly intended for use in [Jupyter](https://jupyter.org/) notebooks. Se
 ## Example
 
 ```
->>> from prometheus_pd import query
+>>> from prometheus_pandas import query
 >>>
 >>> p = query.Prometheus('http://raspberrypi.lan:9090')
 >>> p.query('node_cpu{mode="system"}', '2018-11-23T00:00:00Z')
