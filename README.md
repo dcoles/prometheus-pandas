@@ -19,6 +19,21 @@ node_cpu{cpu="cpu0",instance="localhost:9100",job="node",mode="system"}    1121.
 dtype: float64
 ```
 
+## Installation
+
+Latest release via [`pip`](https://pip.pypa.io):
+
+```bash
+pip install prometheus-pandas [--user]
+```
+
+via Git:
+
+```bash
+git clone https://github.com/dcoles/prometheus-pandas.git; cd prometheus-pandas
+python3 setup.py install [--user]
+```
+
 ## Licence
 
 Licenced under the [MIT License](https://choosealicense.com/licenses/mit/). See `LICENSE` for details.
