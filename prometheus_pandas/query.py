@@ -23,7 +23,7 @@ class Prometheus:
         params.update({'time': time} if time is not None else {})
         params.update({'timeout': timeout.total_seconds()} if timeout is not None else {})
 
-        return to_pandas(self._do_query('/api/v1/query', params))
+        return to_pandas(self._do_query('api/v1/query', params))
 
     def query_range(self, query, start, end, step, timeout=None):
         """
@@ -39,7 +39,7 @@ class Prometheus:
         params = {'query': query, 'start': start, 'end': end, 'step': step}
         params.update({'timeout': timeout} if timeout is not None else {})
 
-        return to_pandas(self._do_query('/api/v1/query_range', params))
+        return to_pandas(self._do_query('api/v1/query_range', params))
 
     def _do_query(self, path, params):
         resp = requests.get(urljoin(self.api_url, path), params=params)
