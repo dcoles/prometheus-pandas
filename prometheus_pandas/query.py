@@ -8,7 +8,14 @@ import requests
 
 class Prometheus:
     def __init__(self, api_url):
+        self.http = requests.Session()
         self.api_url = api_url
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.http.close()
 
     def query(self, query, time=None, timeout=None):
         """
@@ -42,7 +49,7 @@ class Prometheus:
         return to_pandas(self._do_query('api/v1/query_range', params))
 
     def _do_query(self, path, params):
-        resp = requests.get(urljoin(self.api_url, path), params=params)
+        resp = self.http.get(urljoin(self.api_url, path), params=params)
         if not (resp.status_code // 100 == 200 or resp.status_code in [400, 422, 503]):
             resp.raise_for_status()
 
