@@ -11,7 +11,7 @@ SUFFIX_MAP = {
 }
 
 
-def parse_duration(string):
+def duration(string):
     match = re.match(PATTERN, string)
     if not match:
         raise ValueError('Invalid duration: {}'.format(string))
