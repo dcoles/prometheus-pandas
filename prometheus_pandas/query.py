@@ -63,7 +63,7 @@ class Prometheus:
 
     def _do_query(self, path: str, params: dict) -> dict:
         resp = self.http.get(urljoin(self.api_url, path), params=params)
-        if not (resp.status_code // 100 == 200 or resp.status_code in [400, 422, 503]):
+        if resp.status_code not in [400, 422, 503]:
             resp.raise_for_status()
 
         response = resp.json()
