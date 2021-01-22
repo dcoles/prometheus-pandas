@@ -55,7 +55,7 @@ class PrometheusMagics(Magics):
         end = datetime.datetime.now(datetime.timezone.utc)
         start = end - datetime.timedelta(seconds=duration)
         result = query.Prometheus(args.url).query_range(
-            cell, start.timestamp(), end.timestamp(), args.step, timeout=args.timeout)
+            cell, start, end, args.step, timeout=args.timeout)
 
         if args.output:
             self.shell.user_ns[args.output] = result
