@@ -41,7 +41,7 @@ class Prometheus:
         """
         params = {'query': query}
         params.update({'time': time} if time is not None else {})
-        params.update({'timeout': timeout.total_seconds()} if timeout is not None else {})
+        params.update({'timeout': timeout} if timeout is not None else {})
 
         return to_pandas(self._do_query('api/v1/query', params))
 
