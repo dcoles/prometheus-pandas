@@ -1,13 +1,26 @@
 import json
+from typing import Optional, Union
 from urllib.parse import urljoin
 
 import numpy as np
 import pandas as pd
 import requests
 
+Timestamp = Union[str, float]  # RFC-3339 string or as a Unix timestamp in seconds
+Duration = str  # Prometheus duration string
+Matrix = pd.DataFrame
+Vector = pd.Series
+Scalar = np.float64
+String = str
+
 
 class Prometheus:
-    def __init__(self, api_url):
+    def __init__(self, api_url: str):
+        """
+        Create Prometheus client.
+
+        :param api_url: URL of Prometheus server.
+        """
         self.http = requests.Session()
         self.api_url = api_url
 
@@ -17,7 +30,7 @@ class Prometheus:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.http.close()
 
-    def query(self, query, time=None, timeout=None):
+    def query(self, query: str, time: Optional[Timestamp] = None, timeout: Optional[Duration] = None) -> Union[Matrix, Vector, Scalar, String]:
         """
         Evaluates an instant query at a single point in time.
 
@@ -32,7 +45,7 @@ class Prometheus:
 
         return to_pandas(self._do_query('api/v1/query', params))
 
-    def query_range(self, query, start, end, step, timeout=None):
+    def query_range(self, query: str, start: Timestamp, end: Timestamp, step: Union[Duration, float], timeout: Optional[Duration] = None) -> Matrix:
         """
         Evaluates an expression query over a range of time.
 
@@ -48,7 +61,7 @@ class Prometheus:
 
         return to_pandas(self._do_query('api/v1/query_range', params))
 
-    def _do_query(self, path, params):
+    def _do_query(self, path: str, params: dict) -> dict:
         resp = self.http.get(urljoin(self.api_url, path), params=params)
         if not (resp.status_code // 100 == 200 or resp.status_code in [400, 422, 503]):
             resp.raise_for_status()
@@ -60,7 +73,7 @@ class Prometheus:
         return response['data']
 
 
-def to_pandas(data):
+def to_pandas(data: dict) -> Union[Matrix, Vector, Scalar, String]:
     """Convert Prometheus data object to Pandas object."""
     result_type = data['resultType']
     if result_type == 'vector':
@@ -80,7 +93,7 @@ def to_pandas(data):
         raise ValueError('Unknown type: {}'.format(result_type))
 
 
-def metric_name(metric):
+def metric_name(metric: dict) -> str:
     """Convert metric labels to standard form."""
     name = metric.get('__name__', '')
     labels = ','.join(('{}={}'.format(k, json.dumps(v)) for k, v in metric.items() if k != '__name__'))
