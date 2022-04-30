@@ -16,13 +16,14 @@ String = str
 
 
 class Prometheus:
-    def __init__(self, api_url: str):
+    def __init__(self, api_url: str, http: Optional[requests.Session] = None):
         """
         Create Prometheus client.
 
         :param api_url: URL of Prometheus server.
+        :param http: Requests Session to use for requests. Optional.
         """
-        self.http = requests.Session()
+        self.http = http or requests.Session()
         self.api_url = api_url
 
     def __enter__(self):
