@@ -42,6 +42,22 @@ dtype: float64
 2020-10-05 06:00:00         0.018222       0.035111
 ```
 
+Customizing the HTTP request:
+
+```python
+>>> import requests
+>>> from prometheus_pandas import query
+>>>
+>>> http = requests.Session()
+>>> http.cert = '/path/client.cert'
+>>> http.verify = '/path/to/certfile'
+>>>
+>>> p = query.Prometheus('http://localhost:9090', http)
+>>> print(p.query('node_cpu_seconds_total{mode="system"}', '2020-10-05T00:00:00Z'))
+node_cpu_seconds_total{cpu="0",instance="localhost:9100",job="node",mode="system"}    3954.92
+dtype: float64
+```
+
 ## Installation
 
 Latest release via [`pip`](https://pip.pypa.io):
