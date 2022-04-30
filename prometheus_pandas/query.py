@@ -16,14 +16,16 @@ String = str
 
 
 class Prometheus:
-    def __init__(self, api_url: str):
+    def __init__(self, api_url: str, certs: dict = {}):
         """
         Create Prometheus client.
 
         :param api_url: URL of Prometheus server.
+        :param certs: Dictionary with client cert, client key, and server CA cert = { 'cert': (certfile, keyfile), 'verify': cafile}
         """
         self.http = requests.Session()
         self.api_url = api_url
+        self.certs = certs
 
     def __enter__(self):
         return self
@@ -69,7 +71,11 @@ class Prometheus:
         return to_pandas(self._do_query('api/v1/query_range', params))
 
     def _do_query(self, path: str, params: dict) -> dict:
-        resp = self.http.get(urljoin(self.api_url, path), params=params)
+        if 'cert' in self.certs and 'verify' in self.certs:
+                resp = self.http.get(urljoin(self.api_url, path), params=params,
+                                     cert=self.certs['cert'], verify=self.certs['verify'])
+        else:
+	        resp = self.http.get(urljoin(self.api_url, path), params=params)
         if resp.status_code not in [400, 422, 503]:
             resp.raise_for_status()
 
