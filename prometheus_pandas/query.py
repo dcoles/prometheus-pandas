@@ -20,7 +20,7 @@ class Prometheus:
         """
         Create Prometheus client.
 
-        :param api_url: URL of Prometheus server.
+        :param api_url: URL of Prometheus server. Must end with a trailing slash.
         :param http: Requests Session to use for requests. Optional.
         """
         self.http = http or requests.Session()
