@@ -20,11 +20,11 @@ class Prometheus:
         """
         Create Prometheus client.
 
-        :param api_url: URL of Prometheus server. Must end with a trailing slash.
+        :param api_url: URL of Prometheus server.
         :param http: Requests Session to use for requests. Optional.
         """
         self.http = http or requests.Session()
-        self.api_url = api_url
+        self.api_url = api_url + '/' if not api_url.endswith('/') else api_url
 
     def __enter__(self):
         return self
