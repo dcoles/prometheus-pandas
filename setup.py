@@ -6,7 +6,7 @@ with open("README.md", "r") as f:
 
 setup(
     name='prometheus-pandas',
-    version='0.3.2',
+    version='0.3.3',
     description='Pandas integration for Prometheus',
     long_description=long_description,
     long_description_content_type="text/markdown",
