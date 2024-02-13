@@ -49,8 +49,9 @@ Customizing the HTTP request:
 >>> from prometheus_pandas import query
 >>>
 >>> http = requests.Session()
->>> http.cert = '/path/client.cert'
->>> http.verify = '/path/to/certfile'
+>>> http.auth = ('user', 'pass')  # Basic authentication
+>>> http.cert = '/path/client.cert'  # X.509 client certificate authentication
+>>> http.verify = '/path/to/certfile'  # Custom certificate bundle
 >>>
 >>> p = query.Prometheus('http://localhost:9090', http)
 >>> print(p.query('node_cpu_seconds_total{mode="system"}', '2020-10-05T00:00:00Z'))
