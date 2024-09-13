@@ -13,7 +13,8 @@ Evaluate an instant query at a single point in time:
 >>> from prometheus_pandas import query
 >>>
 >>> p = query.Prometheus('http://localhost:9090')
->>> p.query('node_cpu_seconds_total{mode="system"}', '2020-05-10T00:00:00Z')
+>>> series = p.query('node_cpu_seconds_total{mode="system"}', '2020-05-10T00:00:00Z')
+>>> print(series)
 node_cpu_seconds_total{cpu="0",instance="localhost:9100",job="node",mode="system"}    15706.47
 node_cpu_seconds_total{cpu="1",instance="localhost:9100",job="node",mode="system"}    15133.25
 node_cpu_seconds_total{cpu="2",instance="localhost:9100",job="node",mode="system"}    15095.59
@@ -27,9 +28,10 @@ Evaluates an expression query over a time range:
 >>> from prometheus_pandas import query
 >>>
 >>> p = query.Prometheus('http://localhost:9090')
->>> print(p.query_range(
+>>> dataframe = p.query_range(
         'sum(rate(node_cpu_seconds_total{mode=~"system|user"}[1m])) by (mode)',
-        '2020-10-05T00:00:00Z', '2020-10-05T06:00:00Z', '1h'))
+        '2020-10-05T00:00:00Z', '2020-10-05T06:00:00Z', '1h')
+>>> print(dataframe)
 dtype: float64
 ---
                      {mode="system"}  {mode="user"}
@@ -54,7 +56,8 @@ Customizing the HTTP request:
 >>> http.verify = '/path/to/certfile'  # Custom certificate bundle
 >>>
 >>> p = query.Prometheus('http://localhost:9090', http)
->>> print(p.query('node_cpu_seconds_total{mode="system"}', '2020-10-05T00:00:00Z'))
+>>> series = p.query('node_cpu_seconds_total{mode="system"}', '2020-10-05T00:00:00Z')
+>>> print(series)
 node_cpu_seconds_total{cpu="0",instance="localhost:9100",job="node",mode="system"}    3954.92
 dtype: float64
 ```
