@@ -51,6 +51,29 @@ class Prometheus:
 
         return to_pandas(self._do_query('api/v1/query', params))
 
+    def query_dataframe(self, query: str, time: Optional[Timestamp] = None, timeout: Optional[Duration] = None) -> Matrix:
+        """
+        Evaluates an instant query at a single point in time like query(),
+        but always returns a Dataframe with the value in column "value" and
+        prometheus labels used as additional columns.
+
+        :param query: Prometheus expression query string.
+        :param time: Evaluation timestamp. Optional.
+        :param timeout: Evaluation timeout. Optional.
+        :return: Pandas DataFrame.
+        """
+        params = {'query': query}
+
+        if time is not None:
+            params['time'] = _timestamp(time)
+
+        if timeout is not None:
+            params['timeout'] = _duration(timeout)
+
+
+        data = self._do_query('api/v1/query', params)
+        return pd.DataFrame(r['metric'] | {'value': np.float64(r['value'][1])} for r in data['result'])
+
     def query_range(self, query: str, start: Timestamp, end: Timestamp, step: Union[Duration, float], timeout: Optional[Duration] = None) -> Matrix:
         """
         Evaluates an expression query over a range of time.
