@@ -1,4 +1,5 @@
 import re
+import datetime
 
 PATTERN = re.compile(r'^([0-9]+)([smhdwy])$')
 SUFFIX_MAP = {
@@ -11,13 +12,20 @@ SUFFIX_MAP = {
 }
 
 
-def duration(string):
-    match = re.match(PATTERN, string)
-    if not match:
-        raise ValueError('Invalid duration: {}'.format(string))
+def duration(value) -> datetime.timedelta:
+    """Convert duration to `timedelta`."""
+    if isinstance(value, datetime.timedelta):
+        return value
 
-    suffix = match.group(2)
-    if suffix not in SUFFIX_MAP:
-        raise ValueError('Invalid duration suffix: {}'.format(string))
+    if isinstance(value, str):
+        match = re.match(PATTERN, value)
+        if not match:
+            raise ValueError('Invalid duration: {}'.format(value))
 
-    return int(match.group(1)) * SUFFIX_MAP[suffix]
+        suffix = match.group(2)
+        if suffix not in SUFFIX_MAP:
+            raise ValueError('Invalid duration suffix: {}'.format(value))
+
+        value = int(match.group(1)) * SUFFIX_MAP[suffix]
+
+    return datetime.timedelta(seconds=value)

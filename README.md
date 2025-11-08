@@ -13,13 +13,14 @@ Evaluate an instant query at a single point in time:
 >>> from prometheus_pandas import query
 >>>
 >>> p = query.Prometheus('http://localhost:9090')
->>> series = p.query('node_cpu_seconds_total{mode="system"}', '2020-05-10T00:00:00Z')
->>> print(series)
-node_cpu_seconds_total{cpu="0",instance="localhost:9100",job="node",mode="system"}    15706.47
-node_cpu_seconds_total{cpu="1",instance="localhost:9100",job="node",mode="system"}    15133.25
-node_cpu_seconds_total{cpu="2",instance="localhost:9100",job="node",mode="system"}    15095.59
-node_cpu_seconds_total{cpu="3",instance="localhost:9100",job="node",mode="system"}    14649.20
-dtype: float64
+>>> df = p.query('node_cpu_seconds_total{}', '2025-11-01T00:05:00Z')
+>>> print(df)
+__name__            node_cpu_seconds_total
+cpu                                      0
+instance                    localhost:9100
+job                                   node
+mode                                  idle  iowait      irq    nice softirq    steal    system      user
+2025-11-01 00:05:00             3273742.09  563.24  1184.02  471.03  765.63  9935.97  22907.48  42498.63
 ```
 
 Evaluates an expression query over a time range:
@@ -28,20 +29,38 @@ Evaluates an expression query over a time range:
 >>> from prometheus_pandas import query
 >>>
 >>> p = query.Prometheus('http://localhost:9090')
->>> dataframe = p.query_range(
+>>> df = p.query_range(
         'sum(rate(node_cpu_seconds_total{mode=~"system|user"}[1m])) by (mode)',
-        '2020-10-05T00:00:00Z', '2020-10-05T06:00:00Z', '1h')
->>> print(dataframe)
-dtype: float64
----
-                     {mode="system"}  {mode="user"}
-2020-10-05 00:00:00         0.022667       0.038222
-2020-10-05 01:00:00         0.015333       0.036667
-2020-10-05 02:00:00         0.028000       0.040667
-2020-10-05 03:00:00         0.015111       0.034889
-2020-10-05 04:00:00         0.015556       0.038000
-2020-10-05 05:00:00         0.018444       0.040222
-2020-10-05 06:00:00         0.018222       0.035111
+        '2025-11-01T00:00:00Z', '2025-11-01T06:00:00Z', '1h')
+>>> print(df)
+mode                   system      user
+2025-11-01 00:00:00  0.005333  0.009556
+2025-11-01 01:00:00  0.006667  0.012222
+2025-11-01 02:00:00  0.006444  0.009778
+2025-11-01 03:00:00  0.006889  0.011111
+2025-11-01 04:00:00  0.007111  0.010667
+2025-11-01 05:00:00  0.007111  0.012889
+2025-11-01 06:00:00  0.007778  0.013333
+```
+
+Use string labels instead of a [`pd.MultiIndex`](https://pandas.pydata.org/docs/reference/api/pandas.MultiIndex.html#pandas.MultiIndex):
+
+```python
+>>> from prometheus_pandas import query
+>>>
+>>> p = query.Prometheus('http://localhost:9090')
+>>> df = p.query_range(
+        'sum(rate(node_cpu_seconds_total{mode=~"system|user"}[1m])) by (mode)',
+        '2025-11-01T00:00:00Z', '2025-11-01T06:00:00Z', '1h', string_labels=True)
+>>> print(df)
+                    {mode="system"} {mode="user"}
+2025-11-01 00:00:00        0.005333      0.009556
+2025-11-01 01:00:00        0.006667      0.012222
+2025-11-01 02:00:00        0.006444      0.009778
+2025-11-01 03:00:00        0.006889      0.011111
+2025-11-01 04:00:00        0.007111      0.010667
+2025-11-01 05:00:00        0.007111      0.012889
+2025-11-01 06:00:00        0.007778      0.013333
 ```
 
 Customizing the HTTP request:
@@ -56,10 +75,14 @@ Customizing the HTTP request:
 >>> http.verify = '/path/to/certfile'  # Custom certificate bundle
 >>>
 >>> p = query.Prometheus('http://localhost:9090', http)
->>> series = p.query('node_cpu_seconds_total{mode="system"}', '2020-10-05T00:00:00Z')
->>> print(series)
-node_cpu_seconds_total{cpu="0",instance="localhost:9100",job="node",mode="system"}    3954.92
-dtype: float64
+>>> df = p.query('node_cpu_seconds_total{mode="system"}', '2025-11-01T00:05:00Z')
+>>> print(df)
+__name__            node_cpu_seconds_total
+cpu                                      0
+instance                    localhost:9100
+job                                   node
+mode                                system
+2025-11-01 00:05:00               22907.48
 ```
 
 ## Installation
